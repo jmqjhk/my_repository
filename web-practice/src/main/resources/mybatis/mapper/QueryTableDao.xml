@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="my.test.web.practice.dao.QueryTableDao">
+
+	<!-- ==================== resultMap ==================== -->
+	<resultMap type="devicePreConfig" id="dpResultMap">
+		<id property="id" column="ID" />
+		<result property="serialNumber" column="SERIAL_NUMBER" />
+		<result property="pppUsername" column="PPPUSERNAME" />
+		<result property="rgMode" column="RGMODE" />
+		<result property="broadBandStatus" column="BROADBAND_STATUS" />
+		<association property="dss" column="ID" select="findDss"
+			javaType="deviceServiceStatus" />
+		<collection property="paraList" column="ID"
+			ofType="devicePreConfigParam" select="findDpp" />
+	</resultMap>
+	<resultMap type="deviceServiceStatus" id="dssResultMap">
+		<id property="id" column="ID" />
+		<result property="devicePreconfigId" column="DEVICE_PRECONFIG_ID" />
+		<result property="deviceInfoId" column="DEVICEINFO_ID" />
+		<result property="serialNumber" column="SERIAL_NUMBER" />
+		<result property="pppUsername" column="PPPUSERNAME" />
+		<result property="logicId" column="LOGIC_ID" />
+	</resultMap>
+	<resultMap type="devicePreConfigParam" id="dppResultMap">
+		<id property="id" column="ID" />
+		<result property="paraName" column="PARAMETER_NAME" />
+		<result property="paraValue" column="VALUE" />
+		<result property="serviceType" column="SERVICE_TYPE" />
+	</resultMap>
+
+	<!-- ==================== select sql ==================== -->
+	<select id="findDp" resultMap="dpResultMap" parameterType="map">
+		select * from
+		device_preconfig dp
+		<where>
+			<if test="sn != null and sn != ''">dp.serial_number=#{sn}</if>
+			<if test="loid != null and loid != ''">and dp.loid=#{loid}</if>
+			<if test="uname != null and uname != ''">and dp.pppusername=#{uname}</if>
+		</where>
+	</select>
+	<select id="findDss" parameterType="int" resultType="deviceServiceStatus"
+		resultMap="dssResultMap">
+		select *
+		from device_service_status dss
+		where
+		dss.device_preconfig_id=#{id}
+	</select>
+	<select id="findDpp" parameterType="int" resultType="devicePreConfigParam"
+		resultMap="dppResultMap">
+		select *
+		from device_preconfig_parameter dpp
+		where
+		dpp.device_preconfig_id=#{id}
+	</select>
+
+</mapper>
