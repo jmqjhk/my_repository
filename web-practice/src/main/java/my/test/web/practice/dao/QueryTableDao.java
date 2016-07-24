@@ -9,5 +9,5 @@ import my.test.web.practice.entity.DevicePreConfig;
 
 @Repository
 public interface QueryTableDao {
-	public List<DevicePreConfig> findDp(Map<String, String> searchParam);
+	public List<DevicePreConfig>  findDp(Map<String, String> searchParam);
 }
